@@ -55,13 +55,10 @@ pub fn poll_rd1(fd: int, waittime: int) -> int
 }
 
 
-fn on_key(tk: &mut termkey::TermKey, key: &termkey::TermKeyEvent)
+fn on_key(tk: &mut termkey::TermKey, key: termkey::TermKeyEvent)
 {
-    match tk.strfkey(key, termkey::c::TERMKEY_FORMAT_VIM)
-    {
-        Some(s) => { println!("{}", s) }
-        None => {}
-    }
+    let s = tk.strfkey(key, termkey::c::TERMKEY_FORMAT_VIM);
+    println!("{}", s);
 }
 
 fn main()
@@ -77,7 +74,7 @@ fn main()
         {
             match tk.getkey_force()
             {
-                termkey::Key(key) => { on_key(&mut tk, &key) }
+                termkey::Key(key) => { on_key(&mut tk, key) }
                 _ => {}
             }
         }
@@ -91,7 +88,7 @@ fn main()
             {
                 termkey::Key(key) =>
                 {
-                    on_key(&mut tk, &key);
+                    on_key(&mut tk, key);
                     match key
                     {
                         termkey::UnicodeEvent{mods, codepoint, utf8: _} =>

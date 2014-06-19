@@ -37,11 +37,9 @@ fn main()
             termkey::Eof => break,
             termkey::Key(key) =>
             {
-                match tk.strfkey(&key, format)
-                {
-                    Some(s) => { println!("Key {}", s) }
-                    None => {}
-                }
+                let s = tk.strfkey(key, format);
+                println!("Key {}", s);
+
                 match key
                 {
                     termkey::MouseEvent{mods: _, ev: _, button: _, line, col} =>
@@ -57,7 +55,7 @@ fn main()
                         let initial_str = if initial != 0 { "DEC" } else { "ANSI" };
                         println!("Mode report {} mode {} = {}\n", initial_str, mode, value)
                     }
-                    termkey::UnknownCsiEvent{..} =>
+                    termkey::UnknownCsiEvent =>
                     {
                         println!("Unrecognised CSI (printing unimplemented, sorry)\n")
                     }
@@ -80,7 +78,7 @@ fn main()
                     _ => {}
                 }
             }
-            termkey::Error =>
+            termkey::Error{errno: _} =>
             {
                 println!("Error of some sort")
             }

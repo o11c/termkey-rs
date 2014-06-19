@@ -9,7 +9,7 @@ macro_rules! bitset(
     ($BitSet:ident: $T:ty {
         $($VALUE:ident = $value:expr),+
     }) => (
-        #[deriving(Eq)]
+        #[deriving(Eq, Ord)]
         pub struct $BitSet {
             priv bits: $T,
         }

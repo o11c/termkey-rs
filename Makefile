@@ -4,7 +4,7 @@ RUSTCFLAGS = -g --opt-level=2
 PKGCONFIG_TERMKEY = $$(pkg-config --libs termkey) $$(pkg-config --libs-only-L termkey | sed 's:-L:-Wl,-rpath=:')
 
 all: demo-sync demo-async test
-demo-%: src/examples/demo-%.rs termkey
+demo-%: examples/demo-%.rs termkey
 	${RUSTC} ${RUSTCFLAGS} $< -L .
 
 termkey: src/lib.rs

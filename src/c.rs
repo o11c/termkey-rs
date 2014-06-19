@@ -15,7 +15,7 @@ pub unsafe fn TERMKEY_CHECK_VERSION()
     termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR);
 }
 
-#[repr(C)]
+#[repr(C)] #[deriving(Eq, Ord)]
 pub enum TermKeySym
 {
   TERMKEY_SYM_UNKNOWN = -1,
@@ -94,6 +94,16 @@ pub enum TermKeySym
   TERMKEY_N_SYMS
 }
 
+impl ::std::fmt::Show for TermKeySym
+{
+    fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result
+    {
+        let symi: c_int = unsafe { ::std::cast::transmute(*self) };
+        let _ = write!(fmt.buf, "{}", symi);
+        Ok(())
+    }
+}
+
 #[repr(C)]
 pub enum TermKeyType
 {
@@ -118,7 +128,7 @@ pub enum TermKeyResult
   TERMKEY_RES_ERROR
 }
 
-#[repr(C)]
+#[repr(C)] #[deriving(Eq, Ord)]
 pub enum TermKeyMouseEvent
 {
   TERMKEY_MOUSE_UNKNOWN,
@@ -127,12 +137,32 @@ pub enum TermKeyMouseEvent
   TERMKEY_MOUSE_RELEASE
 }
 
+impl ::std::fmt::Show for TermKeyMouseEvent
+{
+    fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result
+    {
+        let symi: c_int = unsafe { ::std::cast::transmute(*self) };
+        let _ = write!(fmt.buf, "{}", symi);
+        Ok(())
+    }
+}
+
 bitset!(X_TermKey_KeyMod: c_int
 {
   TERMKEY_KEYMOD_SHIFT = 1 << 0,
   TERMKEY_KEYMOD_ALT   = 1 << 1,
   TERMKEY_KEYMOD_CTRL  = 1 << 2
 })
+
+impl ::std::fmt::Show for X_TermKey_KeyMod
+{
+    fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result
+    {
+        let symi: c_int = unsafe { ::std::cast::transmute(*self) };
+        let _ = write!(fmt.buf, "{}", symi);
+        Ok(())
+    }
+}
 
 pub struct TermKeyKey
 {
