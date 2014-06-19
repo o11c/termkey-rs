@@ -244,6 +244,34 @@ impl TermKeyKey
             key
         }
     }
+    pub fn from_mouse(tk: *mut TermKey, mods: X_TermKey_KeyMod, ev: TermKeyMouseEvent, button: c_int, line: c_int, col: c_int) -> TermKeyKey
+    {
+        unsafe
+        {
+            let mods: c_int = ::std::mem::transmute(mods);
+            let mut key = TermKeyKey{type_: TERMKEY_TYPE_UNICODE, code: 0, modifiers: mods, utf8: [0, ..7]};
+            termkey_construct_mouse(tk, &mut key, ev, button, line, col);
+            key
+        }
+    }
+    pub fn from_position(tk: *mut TermKey, line: c_int, col: c_int) -> TermKeyKey
+    {
+        unsafe
+        {
+            let mut key = TermKeyKey{type_: TERMKEY_TYPE_UNICODE, code: 0, modifiers: 0, utf8: [0, ..7]};
+            termkey_construct_position(tk, &mut key, line, col);
+            key
+        }
+    }
+    pub fn from_mode_report(tk: *mut TermKey, initial: c_int, mode: c_int, value: c_int) -> TermKeyKey
+    {
+        unsafe
+        {
+            let mut key = TermKeyKey{type_: TERMKEY_TYPE_UNICODE, code: 0, modifiers: 0, utf8: [0, ..7]};
+            termkey_construct_modereport(tk, &mut key, initial, mode, value);
+            key
+        }
+    }
 }
 
 pub struct TermKey;
@@ -332,10 +360,13 @@ pub fn termkey_lookup_keyname(tk: *mut TermKey, str: *c_char, sym: *mut TermKeyS
 pub fn termkey_keyname2sym(tk: *mut TermKey, keyname: *c_char) -> TermKeySym;
 
 pub fn termkey_interpret_mouse(tk: *mut TermKey, key: *TermKeyKey, event: *mut TermKeyMouseEvent, button: *mut c_int, line: *mut c_int, col: *mut c_int) -> TermKeyResult;
+pub fn termkey_construct_mouse(tk: *mut TermKey, key: *mut TermKeyKey, event: TermKeyMouseEvent, button: c_int, line: c_int, col: c_int);
 
 pub fn termkey_interpret_position(tk: *mut TermKey, key: *TermKeyKey, line: *mut c_int, col: *mut c_int) -> TermKeyResult;
+pub fn termkey_construct_position(tk: *mut TermKey, key: *mut TermKeyKey, line: c_int, col: c_int);
 
 pub fn termkey_interpret_modereport(tk: *mut TermKey, key: *TermKeyKey, initial: *mut c_int, mode: *mut c_int, value: *mut c_int) -> TermKeyResult;
+pub fn termkey_construct_modereport(tk: *mut TermKey, key: *mut TermKeyKey, initial: c_int, mode: c_int, value: c_int);
 
 pub fn termkey_interpret_csi(tk: *mut TermKey, key: *TermKeyKey, args: *mut c_long, nargs: *mut size_t, cmd: *mut c_ulong) -> TermKeyResult;
 

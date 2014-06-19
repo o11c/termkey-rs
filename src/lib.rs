@@ -1,4 +1,4 @@
-#![crate_id = "termkey#0.17.1"]
+#![crate_id = "termkey#0.17.2"]
 #![crate_type = "dylib"]
 
 // for bitset_macro
@@ -424,7 +424,6 @@ impl TermKey
 
 impl TermKey
 {
-    // Unlike the C version, does not apply to mouse, mode, or unk-csi
     pub fn strfkey(&mut self, key: TermKeyEvent, format: c::TermKeyFormat) -> String
     {
         let mut buf: [c::c_char, ..52] = [0, ..52];
@@ -442,20 +441,17 @@ impl TermKey
             {
                 c::TermKeyKey::from_sym(mods, sym)
             }
-            MouseEvent{ev: _, mods: _, button: _, line: _, col: _} =>
+            MouseEvent{ev, mods, button, line, col} =>
             {
-                // TODO implement
-                return "mouse event (stringification not implemented)".to_string();
+                c::TermKeyKey::from_mouse(self.tk, mods, ev, button as c::c_int, line as c::c_int, col as c::c_int)
             }
-            PositionEvent{line: _, col: _} =>
+            PositionEvent{line, col} =>
             {
-                // TODO implement
-                return "position event (stringification not implemented)".to_string();
+                c::TermKeyKey::from_position(self.tk, line as c::c_int, col as c::c_int)
             }
-            ModeReportEvent{initial: _, mode: _, value: _} =>
+            ModeReportEvent{initial, mode, value} =>
             {
-                // TODO implement
-                return "mode report event (stringification not implemented)".to_string();
+                c::TermKeyKey::from_mode_report(self.tk, initial as c::c_int, mode as c::c_int, value as c::c_int)
             }
             UnknownCsiEvent =>
             {

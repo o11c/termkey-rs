@@ -1570,7 +1570,7 @@ fn test_30mouse()
 
                         let buffer = tk.strfkey(key, termkey::c::TERMKEY_FORMAT_MOUSE_POS);
                         tap.is_int(buffer.len(), 21, "string length for press");
-                        tap.is_str(buffer, "MousePress(1) @ (1, 1)", "string buffer for press");
+                        tap.is_str(buffer, "MousePress(1) @ (1,1)", "string buffer for press");
                     }
                 _ => { tap.bypass(11, "key.type for mouse press") }
                 }
