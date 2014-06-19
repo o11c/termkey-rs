@@ -1,3 +1,4 @@
 /demo-*
 /libtermkey-*
 /run-tests
+*.stamp

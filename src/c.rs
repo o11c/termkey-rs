@@ -1,21 +1,22 @@
-#[allow(non_camel_case_types)];
+#![allow(non_camel_case_types)]
 
-pub use std::libc::c_char;
-pub use std::libc::c_int;
-pub use std::libc::c_long;
-pub use std::libc::c_ulong;
-pub use std::libc::size_t;
+pub use libc::c_char;
+pub use libc::c_int;
+pub use libc::c_long;
+pub use libc::c_ulong;
+pub use libc::size_t;
 
 //mod bitset_macro;
 
 pub static TERMKEY_VERSION_MAJOR: c_int = 0;
 pub static TERMKEY_VERSION_MINOR: c_int = 17;
+#[allow(non_snake_case_functions)]
 pub unsafe fn TERMKEY_CHECK_VERSION()
 {
     termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR);
 }
 
-#[repr(C)] #[deriving(Eq, Ord)]
+#[repr(C)] #[deriving(PartialEq, PartialOrd)]
 pub enum TermKeySym
 {
   TERMKEY_SYM_UNKNOWN = -1,
@@ -98,8 +99,8 @@ impl ::std::fmt::Show for TermKeySym
 {
     fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result
     {
-        let symi: c_int = unsafe { ::std::cast::transmute(*self) };
-        let _ = write!(fmt.buf, "{}", symi);
+        let symi: c_int = unsafe { ::std::mem::transmute(*self) };
+        let _ = write!(fmt, "{}", symi);
         Ok(())
     }
 }
@@ -118,7 +119,7 @@ pub enum TermKeyType
   TERMKEY_TYPE_UNKNOWN_CSI = -1
 }
 
-#[repr(C)] #[deriving(Eq)]
+#[repr(C)] #[deriving(PartialEq)]
 pub enum TermKeyResult
 {
   TERMKEY_RES_NONE,
@@ -128,7 +129,7 @@ pub enum TermKeyResult
   TERMKEY_RES_ERROR
 }
 
-#[repr(C)] #[deriving(Eq, Ord)]
+#[repr(C)] #[deriving(PartialEq, PartialOrd)]
 pub enum TermKeyMouseEvent
 {
   TERMKEY_MOUSE_UNKNOWN,
@@ -141,8 +142,8 @@ impl ::std::fmt::Show for TermKeyMouseEvent
 {
     fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result
     {
-        let symi: c_int = unsafe { ::std::cast::transmute(*self) };
-        let _ = write!(fmt.buf, "{}", symi);
+        let symi: c_int = unsafe { ::std::mem::transmute(*self) };
+        let _ = write!(fmt, "{}", symi);
         Ok(())
     }
 }
@@ -158,16 +159,17 @@ impl ::std::fmt::Show for X_TermKey_KeyMod
 {
     fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result
     {
-        let symi: c_int = unsafe { ::std::cast::transmute(*self) };
-        let _ = write!(fmt.buf, "{}", symi);
+        let symi: c_int = unsafe { ::std::mem::transmute(*self) };
+        let _ = write!(fmt, "{}", symi);
         Ok(())
     }
 }
 
+#[repr(C)]
 pub struct TermKeyKey
 {
-  type_: TermKeyType,
-  priv code: c_long,
+  pub type_: TermKeyType,
+  pub code: c_long,
   /*
   union {
     long       codepoint; /* TERMKEY_TYPE_UNICODE */
@@ -178,11 +180,11 @@ pub struct TermKeyKey
   } code;
   */
 
-  modifiers: c_int,
+  pub modifiers: c_int,
 
   /* Any Unicode character can be UTF-8 encoded in no more than 6 bytes, plus
    * terminating NUL */
-  utf8: [c_char, ..7],
+  pub utf8: [c_char, ..7],
 }
 impl ::std::default::Default for TermKeyKey
 {
@@ -199,12 +201,12 @@ impl TermKeyKey
     }
     pub unsafe fn num(&self) -> c_int
     {
-        let s: &c_int = ::std::cast::transmute(&self.code);
+        let s: &c_int = ::std::mem::transmute(&self.code);
         *s
     }
     pub unsafe fn sym(&self) -> TermKeySym
     {
-        let s: &TermKeySym = ::std::cast::transmute(&self.code);
+        let s: &TermKeySym = ::std::mem::transmute(&self.code);
         *s
     }
 }
@@ -214,7 +216,7 @@ impl TermKeyKey
     {
         unsafe
         {
-            let mods: c_int = ::std::cast::transmute(mods);
+            let mods: c_int = ::std::mem::transmute(mods);
             let codepoint: c_long = codepoint as c_long;
             TermKeyKey{type_: TERMKEY_TYPE_UNICODE, code: codepoint, modifiers: mods, utf8: utf8}
         }
@@ -223,10 +225,10 @@ impl TermKeyKey
     {
         unsafe
         {
-            let mods: c_int = ::std::cast::transmute(mods);
+            let mods: c_int = ::std::mem::transmute(mods);
             let num: c_int = num as c_int;
             let mut key = TermKeyKey{type_: TERMKEY_TYPE_FUNCTION, code: 0, modifiers: mods, utf8: [0, ..7]};
-            let code: &mut c_int = ::std::cast::transmute(&mut key.code);
+            let code: &mut c_int = ::std::mem::transmute(&mut key.code);
             *code = num;
             key
         }
@@ -235,9 +237,9 @@ impl TermKeyKey
     {
         unsafe
         {
-            let mods: c_int = ::std::cast::transmute(mods);
+            let mods: c_int = ::std::mem::transmute(mods);
             let mut key = TermKeyKey{type_: TERMKEY_TYPE_KEYSYM, code: 0, modifiers: mods, utf8: [0, ..7]};
-            let code: &mut TermKeySym = ::std::cast::transmute(&mut key.code);
+            let code: &mut TermKeySym = ::std::mem::transmute(&mut key.code);
             *code = sym;
             key
         }

@@ -1,17 +1,17 @@
 // https://gist.github.com/bjz/9244400
 
-#[macro_escape];
+#![macro_escape]
 // Needs to be in root of the crate
-//#[feature(macro_rules)];
-#[allow(non_camel_case_types)];
+//#![feature(macro_rules)]
+#![allow(non_camel_case_types)]
 
 macro_rules! bitset(
     ($BitSet:ident: $T:ty {
         $($VALUE:ident = $value:expr),+
     }) => (
-        #[deriving(Eq, Ord)]
+        #[deriving(PartialEq, PartialOrd)]
         pub struct $BitSet {
-            priv bits: $T,
+            bits: $T,
         }
 
         $(pub static $VALUE: $BitSet = $BitSet { bits: $value };)+

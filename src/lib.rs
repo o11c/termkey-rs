@@ -1,10 +1,11 @@
-#[crate_id = "termkey#0.17.1"];
-#[crate_type = "dylib"];
+#![crate_id = "termkey#0.17.1"]
+#![crate_type = "dylib"]
 
 // for bitset_macro
-#[feature(macro_rules)];
-#[feature(struct_variant)];
+#![feature(macro_rules)]
+#![feature(struct_variant)]
 
+extern crate libc;
 mod bitset_macro;
 pub mod c;
 
@@ -20,7 +21,7 @@ impl TermKey
         unsafe
         {
             c::TERMKEY_CHECK_VERSION();
-            let tk = c::termkey_new(fd, std::cast::transmute(flags));
+            let tk = c::termkey_new(fd, std::mem::transmute(flags));
             if tk as uint == 0
             {
                 fail!()
@@ -35,7 +36,7 @@ impl TermKey
             c::TERMKEY_CHECK_VERSION();
             term.with_c_str(|c_buffer|
             {
-                let tk = c::termkey_new_abstract(c_buffer, std::cast::transmute(flags));
+                let tk = c::termkey_new_abstract(c_buffer, std::mem::transmute(flags));
                 if tk as uint == 0
                 {
                     fail!()
@@ -102,14 +103,14 @@ impl TermKey
     {
         unsafe
         {
-            std::cast::transmute(c::termkey_get_flags(self.tk))
+            std::mem::transmute(c::termkey_get_flags(self.tk))
         }
     }
     pub fn set_flags(&mut self, newflags: c::X_TermKey_Flag)
     {
         unsafe
         {
-            c::termkey_set_flags(self.tk, std::cast::transmute(newflags))
+            c::termkey_set_flags(self.tk, std::mem::transmute(newflags))
         }
     }
 
@@ -132,14 +133,14 @@ impl TermKey
     {
         unsafe
         {
-            std::cast::transmute(c::termkey_get_canonflags(self.tk))
+            std::mem::transmute(c::termkey_get_canonflags(self.tk))
         }
     }
     pub fn set_canonflags(&mut self, cflags: c::X_TermKey_Canon)
     {
         unsafe
         {
-            c::termkey_set_canonflags(self.tk, std::cast::transmute(cflags))
+            c::termkey_set_canonflags(self.tk, std::mem::transmute(cflags))
         }
     }
 
@@ -167,16 +168,22 @@ impl TermKey
     }
 }
 
-#[deriving(Ord)]
 pub struct Utf8Char
 {
-    bytes: [c::c_char, ..7],
+    pub bytes: [c::c_char, ..7],
 }
-impl Eq for Utf8Char
+impl PartialEq for Utf8Char
 {
     fn eq(&self, other: &Utf8Char) -> bool
     {
         self.bytes == other.bytes
+    }
+}
+impl PartialOrd for Utf8Char
+{
+    fn lt(&self, other: &Utf8Char) -> bool
+    {
+        self.bytes < other.bytes
     }
 }
 
@@ -187,24 +194,24 @@ impl Utf8Char
         unsafe
         {
             let bytes: &[c::c_char] = self.bytes;
-            let bytes: &[u8] = ::std::cast::transmute(bytes);
+            let bytes: &[u8] = ::std::mem::transmute(bytes);
             ::std::str::raw::from_utf8(bytes).slice_chars(0, 1)
         }
     }
 }
 
 // called TermKeyKey in C
-#[deriving(Eq, Ord)]
+#[deriving(PartialEq, PartialOrd)]
 pub enum TermKeyEvent
 {
     UnknownCsiEvent,
 
-    UnicodeEvent{codepoint: char, mods: c::X_TermKey_KeyMod, utf8: Utf8Char},
-    FunctionEvent{num: int, mods: c::X_TermKey_KeyMod},
-    KeySymEvent{sym: c::TermKeySym, mods: c::X_TermKey_KeyMod},
-    MouseEvent{ev: c::TermKeyMouseEvent, mods: c::X_TermKey_KeyMod, button: int, line: int, col: int},
-    PositionEvent{line: int, col: int},
-    ModeReportEvent{initial: int, mode: int, value: int},
+    UnicodeEvent{pub codepoint: char, pub mods: c::X_TermKey_KeyMod, pub utf8: Utf8Char},
+    FunctionEvent{pub num: int, pub mods: c::X_TermKey_KeyMod},
+    KeySymEvent{pub sym: c::TermKeySym, pub mods: c::X_TermKey_KeyMod},
+    MouseEvent{pub ev: c::TermKeyMouseEvent, pub mods: c::X_TermKey_KeyMod, pub button: int, pub line: int, pub col: int},
+    PositionEvent{pub line: int, pub col: int},
+    ModeReportEvent{pub initial: int, pub mode: int, pub value: int},
 }
 
 impl TermKeyEvent
@@ -217,7 +224,7 @@ impl TermKeyEvent
             {
                 unsafe
                 {
-                    UnicodeEvent{mods: std::cast::transmute(key.modifiers),
+                    UnicodeEvent{mods: std::mem::transmute(key.modifiers),
                             codepoint: std::char::from_u32(key.codepoint() as u32).unwrap(),
                             utf8: Utf8Char{bytes: key.utf8}}
                 }
@@ -226,7 +233,7 @@ impl TermKeyEvent
             {
                 unsafe
                 {
-                    FunctionEvent{mods: std::cast::transmute(key.modifiers),
+                    FunctionEvent{mods: std::mem::transmute(key.modifiers),
                             num: key.num() as int}
                 }
             }
@@ -234,7 +241,7 @@ impl TermKeyEvent
             {
                 unsafe
                 {
-                    KeySymEvent{mods: std::cast::transmute(key.modifiers),
+                    KeySymEvent{mods: std::mem::transmute(key.modifiers),
                             sym: key.sym()}
                 }
             }
@@ -251,7 +258,7 @@ impl TermKeyEvent
                     {
                         fail!()
                     }
-                    MouseEvent{mods: std::cast::transmute(key.modifiers), ev: ev, button: button as int,
+                    MouseEvent{mods: std::mem::transmute(key.modifiers), ev: ev, button: button as int,
                             line: line as int, col: col as int}
                 }
             }
@@ -302,7 +309,7 @@ pub enum TermKeyResult
     Key(TermKeyEvent),
     Eof,
     Again,
-    Error{errno: c::c_int},
+    Error{pub errno: c::c_int},
 }
 impl TermKeyResult
 {
@@ -361,7 +368,7 @@ impl TermKey
     {
         unsafe
         {
-            c::termkey_push_bytes(self.tk, std::cast::transmute(&bytes[0]), bytes.len() as c::size_t) as uint
+            c::termkey_push_bytes(self.tk, std::mem::transmute(&bytes[0]), bytes.len() as c::size_t) as uint
         }
     }
 }
@@ -418,7 +425,7 @@ impl TermKey
 impl TermKey
 {
     // Unlike the C version, does not apply to mouse, mode, or unk-csi
-    pub fn strfkey(&mut self, key: TermKeyEvent, format: c::TermKeyFormat) -> ~str
+    pub fn strfkey(&mut self, key: TermKeyEvent, format: c::TermKeyFormat) -> String
     {
         let mut buf: [c::c_char, ..52] = [0, ..52];
         let mut key_ = match key
@@ -438,29 +445,29 @@ impl TermKey
             MouseEvent{ev: _, mods: _, button: _, line: _, col: _} =>
             {
                 // TODO implement
-                return "mouse event (stringification not implemented)".to_owned();
+                return "mouse event (stringification not implemented)".to_string();
             }
             PositionEvent{line: _, col: _} =>
             {
                 // TODO implement
-                return "position event (stringification not implemented)".to_owned();
+                return "position event (stringification not implemented)".to_string();
             }
             ModeReportEvent{initial: _, mode: _, value: _} =>
             {
                 // TODO implement
-                return "mode report event (stringification not implemented)".to_owned();
+                return "mode report event (stringification not implemented)".to_string();
             }
             UnknownCsiEvent =>
             {
                 // TODO implement
-                return "unknown csi (stringification not implemented)".to_owned();
+                return "unknown csi (stringification not implemented)".to_string();
             }
         };
         unsafe
         {
             let sz = c::termkey_strfkey(self.tk, &mut buf[0], 52, &mut key_, format) as uint;
             assert!(sz < 52, "key name should not be that long!");
-            std::str::raw::from_utf8(std::cast::transmute(buf.slice(0, sz))).to_owned()
+            std::str::raw::from_utf8(std::mem::transmute(buf.slice(0, sz))).to_string()
         }
     }
 

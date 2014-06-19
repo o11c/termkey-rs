@@ -1,8 +1,9 @@
+extern crate libc;
 extern crate native;
 
 extern crate termkey;
 
-use std::libc::c_int;
+use libc::c_int;
 
 #[start]
 fn start(argc: int, argv: **u8) -> int {
@@ -11,9 +12,9 @@ fn start(argc: int, argv: **u8) -> int {
 
 pub mod poll_
 {
-    use std::libc::c_short;
-    use std::libc::c_int;
-    use std::libc::c_ulong;
+    use libc::c_short;
+    use libc::c_int;
+    use libc::c_ulong;
 
     pub static POLLIN: c_short = 0x001;
     pub static POLLPRI: c_short = 0x002;
@@ -35,9 +36,9 @@ pub mod poll_
     #[allow(non_camel_case_types)]
     pub struct pollfd
     {
-        fd: c_int,
-        events: c_short,
-        revents: c_short,
+        pub fd: c_int,
+        pub events: c_short,
+        pub revents: c_short,
     }
     extern
     {

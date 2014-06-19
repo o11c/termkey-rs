@@ -1,11 +1,13 @@
-#[feature(macro_rules)];
+#![feature(macro_rules)]
+
+extern crate libc;
 
 extern crate termkey;
 
 macro_rules! diag(
     ($($arg:tt)*) => ({
         let dst: &mut ::std::io::Writer = &mut ::std::io::stderr();
-        let _ = write!(dst, "\\# ");
+        let _ = write!(dst, "# ");
         let _ = writeln!(dst, $($arg)*);
     })
 )
@@ -38,7 +40,7 @@ mod taplib
             }
             if self._fail
             {
-                if false // !std::task::failing()
+                if !::std::task::failing()
                 {
                     fail!()
                 }
@@ -95,7 +97,7 @@ mod taplib
             self.nexttest += count;
         }
 
-        pub fn is_int<T: Eq + ::std::fmt::Show>(&mut self, got: T, expect: T, name: &str)
+        pub fn is_int<T: PartialEq + ::std::fmt::Show>(&mut self, got: T, expect: T, name: &str)
         {
             if got == expect
             {
@@ -107,8 +109,11 @@ mod taplib
                 diag!("got {} expected {} in: {}", got, expect, name);
             }
         }
-        pub fn is_str(&mut self, got: &str, expect: &str, name: &str)
+        pub fn is_str<T: Str, U: Str>(&mut self, got: T, expect: U, name: &str)
         {
+            let got = got.as_slice();
+            let expect = expect.as_slice();
+
             if got == expect
             {
                 self.ok(true, name);
@@ -817,16 +822,16 @@ fn test_04flags()
     }
 }
 
-fn fd_write(fd: std::libc::c_int, s: &str)
+fn fd_write(fd: libc::c_int, s: &str)
 {
     let s: &[u8] = s.as_bytes();
     let l: uint = s.len();
     let s: *u8 = &s[0];
-    let l: std::libc::size_t = l as std::libc::size_t;
+    let l: libc::size_t = l as libc::size_t;
     unsafe
     {
-        let s: *std::libc::c_void = std::cast::transmute(s);
-        std::libc::write(fd, s, l);
+        let s: *libc::c_void = std::mem::transmute(s);
+        libc::write(fd, s, l);
     }
 }
 
@@ -838,12 +843,12 @@ fn test_05read()
 
     /* We'll need a real filehandle we can write/read.
     * pipe() can make us one */
-    let fd = std::os::pipe();
+    let fd = unsafe { std::os::pipe().unwrap() };
 
     /* Sanitise this just in case */
     std::os::setenv("TERM", "vt100");
 
-    let mut tk = termkey::TermKey::new(fd.input, termkey::c::TERMKEY_FLAG_NOTERMIOS);
+    let mut tk = termkey::TermKey::new(fd.reader, termkey::c::TERMKEY_FLAG_NOTERMIOS);
 
     tap.is_int(tk.get_buffer_remaining(), 256, "buffer free initially 256");
 
@@ -856,7 +861,7 @@ fn test_05read()
         _ => { tap.bypass(1, "getkey yields RES_NONE when empty") }
     }
 
-    fd_write(fd.out, "h");
+    fd_write(fd.writer, "h");
 
     match tk.getkey()
     {
@@ -910,7 +915,7 @@ fn test_05read()
         _ => { tap.bypass(1, "getkey yields RES_NONE a second time") }
     }
 
-    fd_write(fd.out, "\x1bO");
+    fd_write(fd.writer, "\x1bO");
     tk.advisereadable();
 
     tap.is_int(tk.get_buffer_remaining(), 254, "buffer free 254 after partial write");
@@ -924,7 +929,7 @@ fn test_05read()
         _ => { tap.bypass(1, "getkey yields RES_AGAIN after partial write") }
     }
 
-    fd_write(fd.out, "C");
+    fd_write(fd.writer, "C");
     tk.advisereadable();
 
     match tk.getkey()
@@ -956,7 +961,7 @@ fn test_05read()
         termkey::Error{errno} =>
         {
             tap.pass("getkey yields RES_ERROR after termkey_stop()");
-            tap.is_int(errno, std::libc::EINVAL, "getkey error is EINVAL");
+            tap.is_int(errno, libc::EINVAL, "getkey error is EINVAL");
         }
         _ => tap.bypass(2, "getkey yields RES_ERROR after termkey_stop()")
     }
