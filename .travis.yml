@@ -1,0 +1,13 @@
+before_install:
+  - sudo add-apt-repository --yes ppa:hansjorg/rust
+  - sudo apt-get update -qq
+install:
+  - sudo apt-get install -qq rust-nightly
+before_script:
+  - git clone --depth 1 git://github.com/o11c/libtermkey.git -b o11c termkey-c
+  - make -j2 -C termkey-c
+  - make -j2 -C termkey-c test
+  - sudo make -j2 -C termkey-c install
+script:
+  - make -j2
+  - make -j2 test
