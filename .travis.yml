@@ -7,10 +7,12 @@ before_script:
   - git clone --depth 1 git://github.com/mauke/unibilium.git
   - make -j2 -C unibilium
   - sudo make -j2 -C unibilium install
+  - sudo ldconfig
   - git clone --depth 1 git://github.com/o11c/libtermkey.git -b o11c termkey-c
   - make -j2 -C termkey-c
   - make -j2 -C termkey-c test
   - sudo make -j2 -C termkey-c install
+  - sudo ldconfig
 script:
   - make -j2 all
   - make -j2 test
