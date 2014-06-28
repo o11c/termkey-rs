@@ -9,8 +9,8 @@ fn start(argc: int, argv: **u8) -> int {
 
 fn main()
 {
-    let mouse = 0; // TODO parse arg -m, default 1000
-    let mouse_proto = 0; // TODO parse arg -p (no default)
+    let mouse = 0i; // TODO parse arg -m, default 1000
+    let mouse_proto = 0i; // TODO parse arg -p (no default)
     let format = termkey::c::TERMKEY_FORMAT_VIM;
 
     let mut tk = termkey::TermKey::new(0, termkey::c::TERMKEY_FLAG_SPACESYMBOL|termkey::c::TERMKEY_FLAG_CTRLC);
