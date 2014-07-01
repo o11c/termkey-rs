@@ -181,9 +181,9 @@ impl PartialEq for Utf8Char
 }
 impl PartialOrd for Utf8Char
 {
-    fn lt(&self, other: &Utf8Char) -> bool
+    fn partial_cmp(&self, other: &Utf8Char) -> Option<Ordering>
     {
-        self.bytes < other.bytes
+        self.bytes.partial_cmp(&other.bytes.as_slice())
     }
 }
 

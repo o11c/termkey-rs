@@ -319,7 +319,7 @@ extern
 {
 pub fn termkey_check_version(major: c_int, minor: c_int);
 pub fn termkey_new(fd: c_int, flags: c_int) -> *mut TermKey;
-pub fn termkey_new_abstract(term: *c_char, flags: c_int) -> *mut TermKey;
+pub fn termkey_new_abstract(term: *const c_char, flags: c_int) -> *mut TermKey;
 pub fn termkey_free(tk: *mut TermKey);
 pub fn termkey_destroy(tk: *mut TermKey);
 
@@ -351,27 +351,27 @@ pub fn termkey_waitkey(tk: *mut TermKey, key: *mut TermKeyKey) -> TermKeyResult;
 
 pub fn termkey_advisereadable(tk: *mut TermKey) -> TermKeyResult;
 
-pub fn termkey_push_bytes(tk: *mut TermKey, bytes: *c_char, len: size_t) -> size_t;
+pub fn termkey_push_bytes(tk: *mut TermKey, bytes: *const c_char, len: size_t) -> size_t;
 
-pub fn termkey_register_keyname(tk: *mut TermKey, sym: TermKeySym, name: *c_char) -> TermKeySym;
-pub fn termkey_get_keyname(tk: *mut TermKey, sym: TermKeySym) -> *c_char;
-pub fn termkey_lookup_keyname(tk: *mut TermKey, str: *c_char, sym: *mut TermKeySym) -> *c_char;
+pub fn termkey_register_keyname(tk: *mut TermKey, sym: TermKeySym, name: *const c_char) -> TermKeySym;
+pub fn termkey_get_keyname(tk: *mut TermKey, sym: TermKeySym) -> *const c_char;
+pub fn termkey_lookup_keyname(tk: *mut TermKey, str: *const c_char, sym: *mut TermKeySym) -> *const c_char;
 
-pub fn termkey_keyname2sym(tk: *mut TermKey, keyname: *c_char) -> TermKeySym;
+pub fn termkey_keyname2sym(tk: *mut TermKey, keyname: *const c_char) -> TermKeySym;
 
-pub fn termkey_interpret_mouse(tk: *mut TermKey, key: *TermKeyKey, event: *mut TermKeyMouseEvent, button: *mut c_int, line: *mut c_int, col: *mut c_int) -> TermKeyResult;
+pub fn termkey_interpret_mouse(tk: *mut TermKey, key: *const TermKeyKey, event: *mut TermKeyMouseEvent, button: *mut c_int, line: *mut c_int, col: *mut c_int) -> TermKeyResult;
 pub fn termkey_construct_mouse(tk: *mut TermKey, key: *mut TermKeyKey, event: TermKeyMouseEvent, button: c_int, line: c_int, col: c_int);
 
-pub fn termkey_interpret_position(tk: *mut TermKey, key: *TermKeyKey, line: *mut c_int, col: *mut c_int) -> TermKeyResult;
+pub fn termkey_interpret_position(tk: *mut TermKey, key: *const TermKeyKey, line: *mut c_int, col: *mut c_int) -> TermKeyResult;
 pub fn termkey_construct_position(tk: *mut TermKey, key: *mut TermKeyKey, line: c_int, col: c_int);
 
-pub fn termkey_interpret_modereport(tk: *mut TermKey, key: *TermKeyKey, initial: *mut c_int, mode: *mut c_int, value: *mut c_int) -> TermKeyResult;
+pub fn termkey_interpret_modereport(tk: *mut TermKey, key: *const TermKeyKey, initial: *mut c_int, mode: *mut c_int, value: *mut c_int) -> TermKeyResult;
 pub fn termkey_construct_modereport(tk: *mut TermKey, key: *mut TermKeyKey, initial: c_int, mode: c_int, value: c_int);
 
-pub fn termkey_interpret_csi(tk: *mut TermKey, key: *TermKeyKey, args: *mut c_long, nargs: *mut size_t, cmd: *mut c_ulong) -> TermKeyResult;
+pub fn termkey_interpret_csi(tk: *mut TermKey, key: *const TermKeyKey, args: *mut c_long, nargs: *mut size_t, cmd: *mut c_ulong) -> TermKeyResult;
 
 pub fn termkey_strfkey(tk: *mut TermKey, buffer: *mut c_char, len: size_t, key: *mut TermKeyKey, format: TermKeyFormat) -> size_t;
-pub fn termkey_strpkey(tk: *mut TermKey, str: *c_char, key: *mut TermKeyKey, format: TermKeyFormat) -> *c_char;
+pub fn termkey_strpkey(tk: *mut TermKey, str: *const c_char, key: *mut TermKeyKey, format: TermKeyFormat) -> *const c_char;
 
-pub fn termkey_keycmp(tk: *mut TermKey, key1: *TermKeyKey, key2: *TermKeyKey) -> c_int;
+pub fn termkey_keycmp(tk: *mut TermKey, key1: *const TermKeyKey, key2: *const TermKeyKey) -> c_int;
 }
