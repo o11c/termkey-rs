@@ -826,11 +826,11 @@ fn fd_write(fd: libc::c_int, s: &str)
 {
     let s: &[u8] = s.as_bytes();
     let l: uint = s.len();
-    let s: *u8 = &s[0];
+    let s: *const u8 = &s[0];
     let l: libc::size_t = l as libc::size_t;
     unsafe
     {
-        let s: *libc::c_void = std::mem::transmute(s);
+        let s: *const libc::c_void = std::mem::transmute(s);
         libc::write(fd, s, l);
     }
 }

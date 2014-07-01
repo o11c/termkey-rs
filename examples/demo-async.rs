@@ -6,7 +6,7 @@ extern crate termkey;
 use libc::c_int;
 
 #[start]
-fn start(argc: int, argv: **u8) -> int {
+fn start(argc: int, argv: *const *const u8) -> int {
     native::start(argc, argv, main)
 }
 
@@ -42,16 +42,16 @@ pub mod poll_
     }
     extern
     {
-        pub fn poll(fds: *pollfd, nfds: c_ulong, timeout: c_int) -> c_int;
+        pub fn poll(fds: *mut pollfd, nfds: c_ulong, timeout: c_int) -> c_int;
     }
 }
 
 pub fn poll_rd1(fd: int, waittime: int) -> int
 {
-    let pfd = poll_::pollfd{fd: fd as c_int, events: poll_::POLLIN, revents: 0};
+    let mut pfd = poll_::pollfd{fd: fd as c_int, events: poll_::POLLIN, revents: 0};
     unsafe
     {
-        poll_::poll(&pfd, 1, waittime as c_int) as int
+        poll_::poll(&mut pfd, 1, waittime as c_int) as int
     }
 }
 
