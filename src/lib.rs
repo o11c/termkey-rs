@@ -1,4 +1,4 @@
-#![crate_id = "termkey#0.17.2"]
+#![crate_name = "termkey"]
 #![crate_type = "dylib"]
 
 // for bitset_macro

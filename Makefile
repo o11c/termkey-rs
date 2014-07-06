@@ -13,9 +13,10 @@ source.stamp: $(filter-out src/test.rs,$(wildcard src/*.rs))
 	@touch $@
 
 termkey.stamp: src/lib.rs source.stamp
-	${RUSTC} ${RUSTCFLAGS} $< -C link-args="${PKGCONFIG_TERMKEY}"
+	${RUSTC} ${RUSTCFLAGS} $< -C link-args="${PKGCONFIG_TERMKEY}" -C extra_filename=-rust
 	@touch $@
 termkey: termkey.stamp
+.SUFFIXES:
 
 test.stamp: src/test.rs termkey.stamp
 	${RUSTC} ${RUSTCFLAGS} $< -L . --cfg=test -o run-tests
