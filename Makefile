@@ -1,7 +1,13 @@
 RUSTC = rustc
 RUSTCFLAGS = -g --opt-level=2
 
-PKGCONFIG_TERMKEY = $$(pkg-config --libs termkey) $$(pkg-config --libs-only-L termkey | sed 's:-L:-Wl,-rpath=:')
+comma=,
+PKGCONFIG_TERMKEY_LIBS := $(shell pkg-config --libs termkey)
+ifeq '' '${PKGCONFIG_TERMKEY_LIBS}'
+$(error Unable to get libs from pkg-config)
+endif
+PKGCONFIG_TERMKEY_RPATH := $(subst -L,-Wl${comma}-rpath=,$(shell pkg-config --libs-only-L termkey))
+PKGCONFIG_TERMKEY := $(strip ${PKGCONFIG_TERMKEY_LIBS} ${PKGCONFIG_TERMKEY_RPATH})
 
 default: termkey
 all: demo termkey
@@ -13,7 +19,8 @@ source.stamp: $(filter-out src/test.rs,$(wildcard src/*.rs))
 	@touch $@
 
 termkey.stamp: src/lib.rs source.stamp
-	${RUSTC} ${RUSTCFLAGS} $< -C link-args="${PKGCONFIG_TERMKEY}" -C extra_filename=-rust
+	echo '#[link_args = "'${PKGCONFIG_TERMKEY}'"] extern {}' > src/generated_link.rs
+	${RUSTC} ${RUSTCFLAGS} $< -C extra_filename=-rust
 	@touch $@
 termkey: termkey.stamp
 .SUFFIXES:

@@ -4,10 +4,12 @@
 // for bitset_macro
 #![feature(macro_rules)]
 #![feature(struct_variant)]
+#![feature(link_args)]
 
 extern crate libc;
 mod bitset_macro;
 pub mod c;
+mod generated_link;
 
 pub struct TermKey
 {

@@ -2,3 +2,4 @@
 /libtermkey-*
 /run-tests
 *.stamp
+src/generated_link.rs
