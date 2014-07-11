@@ -64,7 +64,7 @@ fn on_key(tk: &mut termkey::TermKey, key: termkey::TermKeyEvent)
 
 fn main()
 {
-    let mut tk = termkey::TermKey::new(0, termkey::c::X_TermKey_Flag::empty());
+    let mut tk = termkey::TermKey::new(0, termkey::c::TERMKEY_FLAG_CTRLC);
     let mut running: bool = true;
     let mut nextwait = -1;
 

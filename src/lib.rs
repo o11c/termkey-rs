@@ -1,6 +1,3 @@
-#![crate_name = "termkey"]
-#![crate_type = "dylib"]
-
 // for bitset_macro
 #![feature(macro_rules)]
 #![feature(struct_variant)]
