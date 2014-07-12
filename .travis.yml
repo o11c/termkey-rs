@@ -1,8 +1,9 @@
 before_install:
   - sudo add-apt-repository --yes ppa:hansjorg/rust
+  - sudo add-apt-repository --yes ppa:cmrx64/cargo
   - sudo apt-get update -qq
 install:
-  - sudo apt-get install -qq rust-nightly
+  - sudo apt-get install -qq rust-nightly cargo
 before_script:
   - git clone --depth 1 git://github.com/mauke/unibilium.git
   - make -j2 -C unibilium
@@ -14,5 +15,5 @@ before_script:
   - sudo make -j2 -C termkey-c install
   - sudo ldconfig
 script:
-  - cargo build -j 2
-  - cargo test -j 2
+  - cargo build -j 2 -v
+  - cargo test -j 2 -v
