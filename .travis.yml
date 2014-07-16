@@ -1,9 +1,5 @@
-before_install:
-  - sudo add-apt-repository --yes ppa:hansjorg/rust
-  - sudo add-apt-repository --yes ppa:cmrx64/cargo
-  - sudo apt-get update -qq
 install:
-  - sudo apt-get install -qq rust-nightly cargo
+  - curl http://www.rust-lang.org/rustup.sh | sudo sh -
 before_script:
   - git clone --depth 1 git://github.com/mauke/unibilium.git
   - make -j2 -C unibilium
