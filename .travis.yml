@@ -1,5 +1,4 @@
-install:
-  - curl http://www.rust-lang.org/rustup.sh | sudo sh -
+language: rust
 before_script:
   - git clone --depth 1 git://github.com/mauke/unibilium.git
   - make -j2 -C unibilium
@@ -10,6 +9,3 @@ before_script:
   - make -j2 -C termkey-c test
   - sudo make -j2 -C termkey-c install
   - sudo ldconfig
-script:
-  - cargo build -j 2 -v
-  - cargo test -j 2 -v
