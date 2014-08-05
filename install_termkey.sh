@@ -11,13 +11,16 @@ then
 fi
 
 . ./install.conf.sh
+make="${make} PREFIX=${prefix}"
 
 git clone --depth 1 git://github.com/mauke/unibilium.git
-${make} -j2 -C unibilium PREFIX=${prefix}
-${sudo} ${make} -j2 -C unibilium install PREFIX=${prefix}
+${make} -j2 -C unibilium
+${make} -j2 -C unibilium test
+${sudo} ${make} -j2 -C unibilium install
 ${sudo} ${ldconfig}
+
 git clone --depth 1 git://github.com/o11c/libtermkey.git -b o11c termkey-c
-${make} -j2 -C termkey-c PREFIX=${prefix}
-${make} -j2 -C termkey-c test PREFIX=${prefix}
-${sudo} ${make} -j2 -C termkey-c install PREFIX=${prefix}
+${make} -j2 -C termkey-c
+${make} -j2 -C termkey-c test
+${sudo} ${make} -j2 -C termkey-c install
 ${sudo} ${ldconfig}
