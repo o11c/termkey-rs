@@ -274,7 +274,7 @@ impl TermKeyKey
     }
 }
 
-pub struct TermKey;
+pub enum TermKey {}
 
 bitset!(X_TermKey_Flag : c_int
 {

@@ -33,6 +33,7 @@ pub mod poll_
     pub static POLLHUP: c_short = 0x010;
     pub static POLLNVAL: c_short = 0x020;
 
+    #[repr(C)]
     #[allow(non_camel_case_types)]
     pub struct pollfd
     {

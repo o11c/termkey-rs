@@ -9,6 +9,7 @@ macro_rules! bitset(
     ($BitSet:ident: $T:ty {
         $($VALUE:ident = $value:expr),+
     }) => (
+        #[repr(C)]
         #[deriving(PartialEq, PartialOrd)]
         pub struct $BitSet {
             bits: $T,

@@ -1,22 +1,17 @@
 [project]
 name = "termkey"
-version = "0.17.4"
+version = "0.17.5"
 authors = ["Ben Longbons <b.r.longbons@gmail.com>"]
 build = [
     "./install_termkey.sh",
     "./generate_link.sh"
 ]
 
-[[lib]]
+[lib]
 name = "termkey"
-# path = "src/lib.rs"
 crate_type = ["dylib"]
 test = false
 
-# [[example]]
-# name = "demo-sync"
-# path = "examples/demo-sync.rs"
-
-# [[example]]
-# name = "demo-async"
-# path = "examples/demo-async.rs"
+[[test]]
+name = "integration"
+path = "src/test.rs"
