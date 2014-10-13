@@ -15,7 +15,7 @@ macro_rules! bitset(
             bits: $T,
         }
 
-        $(pub static $VALUE: $BitSet = $BitSet { bits: $value };)+
+        $(pub const $VALUE: $BitSet = $BitSet { bits: $value };)+
 
         impl $BitSet {
             /// The empty bitset.
