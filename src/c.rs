@@ -10,7 +10,7 @@ pub use libc::size_t;
 
 pub static TERMKEY_VERSION_MAJOR: c_int = 0;
 pub static TERMKEY_VERSION_MINOR: c_int = 17;
-#[allow(non_snake_case_functions)]
+#[allow(non_snake_case)]
 pub unsafe fn TERMKEY_CHECK_VERSION()
 {
     termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR);
