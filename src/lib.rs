@@ -23,7 +23,7 @@ impl TermKey
             let tk = c::termkey_new(fd, std::mem::transmute(flags));
             if tk as uint == 0
             {
-                fail!()
+                panic!()
             }
             TermKey{tk: tk}
         }
@@ -38,7 +38,7 @@ impl TermKey
                 let tk = c::termkey_new_abstract(c_buffer, std::mem::transmute(flags));
                 if tk as uint == 0
                 {
-                    fail!()
+                    panic!()
                 }
                 TermKey{tk: tk}
             })
@@ -65,7 +65,7 @@ impl TermKey
         {
             if c::termkey_start(self.tk) == 0
             {
-                fail!()
+                panic!()
             }
         }
     }
@@ -75,7 +75,7 @@ impl TermKey
         {
             if c::termkey_stop(self.tk) == 0
             {
-                fail!()
+                panic!()
             }
         }
     }
@@ -255,7 +255,7 @@ impl TermKeyEvent
                     if c::termkey_interpret_mouse(tk, &key,
                             &mut ev, &mut button, &mut line, &mut col) != c::TERMKEY_RES_KEY
                     {
-                        fail!()
+                        panic!()
                     }
                     MouseEvent{mods: std::mem::transmute(key.modifiers), ev: ev, button: button as int,
                             line: line as int, col: col as int}
@@ -270,7 +270,7 @@ impl TermKeyEvent
                     if c::termkey_interpret_position(tk, &key,
                             &mut line, &mut col) != c::TERMKEY_RES_KEY
                     {
-                        fail!()
+                        panic!()
                     }
                     PositionEvent{line: line as int, col: col as int}
                 }
@@ -285,7 +285,7 @@ impl TermKeyEvent
                     if c::termkey_interpret_modereport(tk, &key,
                             &mut initial, &mut mode, &mut value) != c::TERMKEY_RES_KEY
                     {
-                        fail!()
+                        panic!()
                     }
                     ModeReportEvent{initial: initial as int, mode: mode as int, value: value as int}
                 }

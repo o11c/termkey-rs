@@ -82,7 +82,7 @@ fn main()
             {
                 println!("Error of some sort")
             }
-            _ => { fail!() }
+            _ => { panic!() }
         }
     }
     if mouse != 0

@@ -42,11 +42,11 @@ mod taplib
             {
                 if !::std::task::failing()
                 {
-                    fail!()
+                    panic!()
                 }
                 else
                 {
-                    diag!("avoiding double-fail!() ...")
+                    diag!("avoiding double-panic!() ...")
                 }
             }
         }
